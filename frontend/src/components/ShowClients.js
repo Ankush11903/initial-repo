@@ -56,6 +56,7 @@ function ShowClients(props) {
     console.log(clients)
 
     const updateClient = async (clientId) => {
+        setEditModalOpen(false);
         const updatedClient = {
             name: editName,
             email: editEmail,
@@ -105,7 +106,7 @@ function ShowClients(props) {
     <tbody>
     {clients?.map((client) => (
   (editid === client._id) ? (
-    <div className='flex m-w-20'>
+    <div className='flex w-96'>
       <input
         type="text"
         value={editName}
@@ -145,9 +146,10 @@ function ShowClients(props) {
               id="photo"
               type="file"
               placeholder="Enter your photo"
-              onChange={(e)=>setEditPhoto(e.target.files[0]}
+              onChange={(e)=>setEditPhoto(e.target.files[0])}
             />
-      <button onClick={()=>updateClient(client._id)} className='p-2 h-8 ml-10 bg-blue-100'>Update</button>
+      
+      <button onClick={()=>updateClient(client._id)} className='p-2 h-8 ml-20 bg-blue-100'>Update</button>
     </div>
   ) : (
     <tr key={client._id}>

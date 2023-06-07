@@ -22,9 +22,14 @@ function signup() {
           })
         });
         const data=await response.json();
+        alert(data.message);
         console.log(data);
-        navigate('/login');
+        if(data.message==="user created"){
+            navigate('/login');
+        }
+        // navigate('/login');
     }catch(err){
+        alert("error occured");
       console.log(err);
     }
     

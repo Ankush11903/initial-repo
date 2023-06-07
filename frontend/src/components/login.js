@@ -35,7 +35,10 @@ const Login=()=> {
             console.log("login successfull")
             // wants to show on the page that login is successfull
             alert(data.message);
-            navigate('/');
+            if(data.message==="login successfull"){
+                navigate('/');
+            }
+            
         }catch(err){
             console.log("error occured")
             console.log(err);

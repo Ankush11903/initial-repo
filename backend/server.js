@@ -75,7 +75,7 @@ const userSchema = new mongoose.Schema({
   },
     num: {
     type: Number,
-    required: true,
+    required: false,
     }
 });
 const UserInfo = new mongoose.model("User", userSchema);
@@ -84,12 +84,28 @@ const DeleteUser = new mongoose.model("Delete", userSchema);
 
 app.use(express.json());
 
+const userSchema2= new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        },
+    email: {
+        type: String,
+        required: true,
+        },
+        password: {
+        type: String,
+        required: true,
+        },
+    });
+    const user2= new mongoose.model("User2", userSchema2);
+
 app.post("/register", async (req, res) => {
-  const searchmail = await User.findOne({ email: req.body.email });
+  const searchmail = await user2.findOne({ email: req.body.email });
   if (searchmail) {
     res.status(409).json({ message: "user already exist", status: 409 });
   } else {
-    const user = new User({
+    const user = new user2({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
@@ -106,11 +122,13 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
+    console.log(res.body)
 //   console.log("running 1");
 
-  const findUser = await User.findOne({ email: req.body.email });
-//   console.log("running 3");
-  // console.log(findUser.users.password)
+  const findUser = await user2.findOne({ email: req.body.email });
+  console.log("running 3");
+  console.log(findUser)
+
   if (findUser) {
     // console.log(findUser.password);
     if (findUser.password == req.body.password) {
@@ -154,6 +172,42 @@ app.delete("/clients/:id", async (req, res) => {
   }
 });
 
+app.put('/clients/:clientId', async(req, res) => {
+    const clientId = req.params.clientId;
+    const findUser=await UserInfo.findById(clientId);
+    console.log(findUser)
+    findUser.name = req.body.name;
+    findUser.email = req.body.email;
+    findUser.address = req.body.address;
+    findUser.phone = req.body.phone;
+    findUser.num = req.body.num;
+    console.log(req.body)
+    
+    if (req.file) {
+    const { name, email, address, phone,num } = req.body;
+    const photo = req.file.filename;
+
+    const user = new UserInfo({
+      name,
+      email,
+      address,
+      phone,
+      photo,
+      num
+    });}
+  
+    
+    UserInfo.findByIdAndUpdate(clientId, findUser, { new: true })
+    .then((user) => {
+      res.json(user);
+    })
+    .catch((err) => {
+      console.error('Error updating client:', err);
+      res.status(500).json({ error: 'Failed to update client' });
+    });
+  });
+  
+
 app.delete("/deletes/:id", async (req, res) => {
   try {
     const id = req.params.id;
@@ -183,6 +237,8 @@ app.delete("/deletes/:id", async (req, res) => {
     res.status(500).json({ message: "Error occurred" });
   }
 });
+
+
 
 app.post("/clients", upload.single("photo"), (req, res) => {
   if (req.file) {
