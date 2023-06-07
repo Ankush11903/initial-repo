@@ -2,6 +2,9 @@ import React,{useState} from 'react'
 // show clients component
 
 function ShowClients(props) {
+    // console.log(props)
+    const rates=props.rates;
+    // console.log(rates)
 
 
     const [editModalOpen, setEditModalOpen] = useState(false);
@@ -12,6 +15,7 @@ function ShowClients(props) {
   const [editPhone, setEditPhone] = useState('');
   const [editid, setEditid] = useState('');
   const [showModal, setShowModal] = useState(false);
+
 
   const handleDelete = async (client) => {
     const response = await fetch(
@@ -92,6 +96,7 @@ function ShowClients(props) {
             console.error(error);
         }
     };
+    // console.log(clients)
 
 
 
@@ -104,53 +109,90 @@ function ShowClients(props) {
             <tr>
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Email</th>
-              <th className="px-4 py-2">Address</th>
               <th className="px-4 py-2">Phone</th>
+              <th className="px-4 py-2">Address</th>
+              <th className="px-4 py-2">rate</th>
               <th className="px-4 py-2">Photo</th>
             </tr>
             
           </thead>
     <tbody>
-        {clients?.map((client) => (
-            <tr key={client._id}>
-                <td className="border px-4 py-2">{client.name}</td>
-                <td className="border px-4 py-2">{client.email}</td>
-                <td className="border px-4 py-2">{client.phone}</td>
-                <td className="border px-4 py-2">{client.address}</td>
-                <td className="border px-4 py-2">
-                <img
-                src={`http://localhost:3000/uploads/${client.photo}`}
-                alt="client"
-                width="100px"
-                height="100px"
-                />
-            </td>
-            <td className="border px-4 py-2">
-                <button onClick={() => handleEdit(client._id)}>Edit</button>
-              </td>
-            <td className="border px-4 py-2">
-            <button onClick={() => handleDelete(client)}>Delete</button>
-              </td>
+    {clients?.map((client) => (
+  (editid === client._id) ? (
+    <div className='flex m-w-20'>
+      <input
+        type="text"
+        value={editName}
+        onChange={(e) => setEditName(e.target.value)}
+        placeholder="Name"
+        className="border border-red-900"
+      />
 
-              
-            </tr>
-            
-            
-            
-            
-        ))}
+      <input
+        type="text"
+        value={editEmail}
+        onChange={(e) => setEditEmail(e.target.value)}
+        placeholder="Email"
+      />
+
+      <input
+        type="text"
+        value={editAddress}
+        onChange={(e) => setEditAddress(e.target.value)}
+        placeholder="Address"
+      />
+
+      <input
+        type="text"
+        value={editPhone}
+        onChange={(e) => setEditPhone(e.target.value)}
+        placeholder="Phone"
+      />
+      <button onClick={Change} className='p-2 h-8 ml-10 bg-blue-100'>Update</button>
+    </div>
+  ) : (
+    <tr key={client._id}>
+      <td className="border px-4 py-2">{client.name}</td>
+      <td className="border px-4 py-2">{client.email}</td>
+      <td className="border px-4 py-2">{client.phone}</td>
+      <td className="border px-4 py-2">{client.address}</td>
+
+      <tbody>
+        {rates.map((rate) => {
+          if (rate.num === client.num) {
+            return (
+              <tr key={rate._id}>
+                <td>{rate.rate}{console.log(rate)}</td>
+              </tr>
+            );
+          }
+        })}
+      </tbody>
+
+      <td className="border px-4 py-2">
+        <img
+          src={`http://localhost:3000/uploads/${client.photo}`}
+          alt="client"
+          width="100px"
+          height="100px"
+        />
+      </td>
+      <td className="border px-4 py-2">
+        <button onClick={() => handleEdit(client._id)}>Edit</button>
+      </td>
+      <td className="border px-4 py-2">
+        <button onClick={() => handleDelete(client)}>Delete</button>
+      </td>
+    </tr>
+  )
+))}
+
 
 
     </tbody>
         </table>
         <div>
-        {showModal && (
-                <div className="fixed z-10 inset-0 overflow-y-auto">
-                    <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                        <input type="text" className='h-96 p-96 ' />
-                        </div>
-                        </div>
-            )}
+        
         </div>
         </div>
   )
