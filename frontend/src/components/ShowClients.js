@@ -14,6 +14,7 @@ function ShowClients(props) {
   const [editAddress, setEditAddress] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [editid, setEditid] = useState('');
+    const [editPhoto, setEditPhoto] = useState('');
   const [showModal, setShowModal] = useState(false);
 
 
@@ -48,36 +49,21 @@ function ShowClients(props) {
     setEditModalOpen(true);
   };
 
-  const handleEditModalSubmit = (e) => {
-    e.preventDefault();
+  
 
-    const updatedClient = {
-      name: editName,
-      email: editEmail,
-      address: editAddress,
-      phone: editPhone,
-    };
-
-    updateClient(editClientId, updatedClient)
-      .then((response) => {
-        // Handle the successful update
-        console.log('Client information updated successfully');
-        // Close the edit modal
-        setEditModalOpen(false);
-      })
-      .catch((error) => {
-        // Handle the error
-        console.error('Error updating client information', error);
-      });
-  };
-
-  const handleEditModalClose = () => {
-    setEditModalOpen(false);
-  };
+  
     const clients = props.clientinfo;
     console.log(clients)
 
-    const updateClient = async (clientId, updatedClient) => {
+    const updateClient = async (clientId) => {
+        const updatedClient = {
+            name: editName,
+            email: editEmail,
+            address: editAddress,
+            phone: editPhone,
+            photo: editPhoto,
+          };
+        
         try {
             const response = await fetch(
                 `http://localhost:3000/clients/${clientId}`,
@@ -148,7 +134,20 @@ function ShowClients(props) {
         onChange={(e) => setEditPhone(e.target.value)}
         placeholder="Phone"
       />
-      <button onClick={Change} className='p-2 h-8 ml-10 bg-blue-100'>Update</button>
+      <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="photo"
+            >
+              Photo
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="photo"
+              type="file"
+              placeholder="Enter your photo"
+              onChange={(e)=>setEditPhoto(e.target.files[0]}
+            />
+      <button onClick={()=>updateClient(client._id)} className='p-2 h-8 ml-10 bg-blue-100'>Update</button>
     </div>
   ) : (
     <tr key={client._id}>

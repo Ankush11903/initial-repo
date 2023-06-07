@@ -13,7 +13,11 @@ import ShowClients from "./ShowClients";
 
 function clients() {
   // wants to call the api and get the list of clients and their details
-  var num=1;
+  const min = 1;
+const max = 100000000000000;
+const num = Math.floor(Math.random() * (max - min + 1)) + min;
+console.log(num);
+
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -67,6 +71,23 @@ function clients() {
           catch(err){
               console.log(err)
           }
+
+          try{
+            
+            fetch('http://localhost:3000/rateinfo')
+              .then(res => res.json())
+              .then(data => {
+                setRates(data);
+                console.log("calling1234567890000")
+                console.log(data);
+              })
+              .catch(err => {
+                console.log(err);
+              });
+          }
+            catch(err){
+                console.log(err)
+            }
         
   }, []);
 
@@ -117,6 +138,7 @@ function clients() {
   
 
   const handleSubmit=async(e)=>{
+    // num=num+1;
       console.log("adding")
       e.preventDefault()
       const formData=new FormData()
@@ -125,11 +147,13 @@ function clients() {
       formData.append('address',address)
       formData.append('phone',phone)
       formData.append('photo',photo)
+      formData.append('num',num)
 
 
       const requestData = {
         weight: weight,
-        distance: distance
+        distance: distance,
+        num:num,
       };
       
       try {
@@ -144,18 +168,12 @@ function clients() {
         const data = await response.json();
         console.log(data);
       
-        fetch('http://localhost:3000/rateinfo')
-          .then(res => res.json())
-          .then(data => {
-            setRates(data);
-            console.log(data);
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        
       } catch (err) {
         console.log(err);
       }
+
+      
       
         
       try{
@@ -302,7 +320,9 @@ function clients() {
         <table className="table-auto">
           
           <tbody>
-          <ShowClients clientinfo={clientinfo}  setDeletesinfo={setDeletesinfo} setClientinfo={setClientinfo} />
+            {console.log("printing")}
+            {console.log(rates)}
+          <ShowClients clientinfo={clientinfo}  setDeletesinfo={setDeletesinfo} setClientinfo={setClientinfo} rates={rates} />
 
 
           </tbody>
@@ -319,6 +339,7 @@ function clients() {
                     <th className="px-4 py-2">Address</th>
                     <th className="px-4 py-2">Phone</th>
                     <th className="px-4 py-2">Photo</th>
+                    <th className="px-4 py-2">Rate</th>
                 </tr>
             </thead>
             <tbody>
@@ -345,6 +366,19 @@ function clients() {
                 height="100px"
                 />
             </td>
+            <td>
+          {rates.map((rate) => {
+            // let matchingRate;
+            if (rate.num === client.num) {
+            return (
+                
+              <tr key={rate._id}>
+                {/* <td>{rate.num}</td> */}
+                <td>{rate.rate}{console.log(rate)}</td>
+                {/* <td>{matchingRate ? matchingRate.rate : '-'}</td> */}
+              </tr>
+            );}})}
+        </td>
             <td className="border px-4 py-2">
                 <button onClick={() => handleRestore(client)}>Restore</button>
             </td>

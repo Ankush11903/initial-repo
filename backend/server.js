@@ -73,6 +73,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+    num: {
+    type: Number,
+    required: true,
+    }
 });
 const UserInfo = new mongoose.model("User", userSchema);
 
@@ -102,13 +106,13 @@ app.post("/register", async (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  console.log("running 1");
+//   console.log("running 1");
 
   const findUser = await User.findOne({ email: req.body.email });
-  console.log("running 3");
+//   console.log("running 3");
   // console.log(findUser.users.password)
   if (findUser) {
-    console.log(findUser.password);
+    // console.log(findUser.password);
     if (findUser.password == req.body.password) {
       res.status(200).json({ message: "login successful" });
     } else {
@@ -123,7 +127,7 @@ app.use("/uploads", express.static("uploads"));
 app.delete("/clients/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(id);
+    // console.log(id);
 
     const result = await UserInfo.findById(id);
     if (!result) {
@@ -136,12 +140,13 @@ app.delete("/clients/:id", async (req, res) => {
       address: result.address,
       phone: result.phone,
       photo: result.photo,
+      num: result.num
     });
 
     await user.save();
     await UserInfo.findByIdAndDelete(id);
 
-    console.log("deleted");
+    // console.log("deleted");
     res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
     console.error(err);
@@ -152,7 +157,7 @@ app.delete("/clients/:id", async (req, res) => {
 app.delete("/deletes/:id", async (req, res) => {
   try {
     const id = req.params.id;
-    console.log(id);
+    // console.log(id);
 
     const result = await DeleteUser.findById(id);
     if (!result) {
@@ -165,12 +170,13 @@ app.delete("/deletes/:id", async (req, res) => {
       address: result.address,
       phone: result.phone,
       photo: result.photo,
+        num: result.num
     });
 
     await user.save();
     await DeleteUser.findByIdAndDelete(id);
 
-    console.log("deleted");
+    // console.log("deleted");
     res.status(200).json({ message: "User deleted successfully" });
   } catch (err) {
     console.error(err);
@@ -180,7 +186,7 @@ app.delete("/deletes/:id", async (req, res) => {
 
 app.post("/clients", upload.single("photo"), (req, res) => {
   if (req.file) {
-    const { name, email, address, phone } = req.body;
+    const { name, email, address, phone,num } = req.body;
     const photo = req.file.filename;
 
     const user = new UserInfo({
@@ -189,6 +195,7 @@ app.post("/clients", upload.single("photo"), (req, res) => {
       address,
       phone,
       photo,
+      num
     });
 
     user
@@ -230,10 +237,14 @@ app.post("/rate", async (req, res) => {
     let w = weight;
     let d = distance;
   
-    while (w && d) {
+    while (w>0) {
       rate = rate + 10;
       w = w - 1;
-      d = d - 1;
+      
+    }
+    while(d>0){
+        rate=rate+10;
+        d=d-1;
     }
   
     if (distance > 10) {
@@ -250,7 +261,7 @@ app.post("/rate", async (req, res) => {
       distance: distance,
       weight: weight,
       rate: rate,
-      num:num,
+      num:num
     });
   
     await rateinfo.save();
@@ -269,13 +280,13 @@ app.get("/rateinfo", async (req, res) => {
 // wants to send client data to the frontend
 app.get("/clientsinfo", async (req, res) => {
   const clients = await UserInfo.find();
-  console.log(clients);
+//   console.log(clients);
   res.json(clients);
 });
 
 app.get("/deletesinfo", async (req, res) => {
   const clients = await DeleteUser.find();
-  console.log(clients);
+//   console.log(clients);
   res.json(clients);
 });
 
